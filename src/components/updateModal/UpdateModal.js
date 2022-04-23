@@ -19,7 +19,25 @@ Modal.setAppElement("#root");
 
 //don't worry its just a package for modal. just go and explore https://www.npmjs.com/package/react-modal
 
-export default function UpdateModal() {
+export default function UpdateModal({setIsReload, IsReload, id}) {
+    const handleUpdateNote = (e) => {
+        e.preventDefault();
+        const userName = e.target.userName.value;
+        const textData = e.target.textData.value;
+        const data = {userName, textData};
+        fetch(`http://localhost:5000/note/${id}`, {
+            method: "PUT",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            console.log(result);
+            setIsReload(!IsReload);
+        })
+    }
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
@@ -29,7 +47,7 @@ export default function UpdateModal() {
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
-    subtitle.style.color = "#f00";
+    subtitle.style.color = "#fff";
   }
 
   function closeModal() {
@@ -54,10 +72,11 @@ export default function UpdateModal() {
         </button>
         <div>Please insert your text</div>
         <div className=" p-3 color-4D4C7D">
-          <form className="container " >
+          <form onSubmit={handleUpdateNote} className="container " >
             <div className="input-group mb-3 mt-5">
               <input
                 type="text"
+                name="userName"
                 className="form-control"
                 placeholder="Your name"
                 aria-label="Username"
@@ -66,6 +85,7 @@ export default function UpdateModal() {
 
             <div className="input-group">
               <textarea
+                name="textData"
                 className="form-control"
                 aria-label="With textarea"
               ></textarea>
